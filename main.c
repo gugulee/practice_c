@@ -1,31 +1,20 @@
-#include "apue.h"
-#include <errno.h>
-#include <fcntl.h>
+#include <inttypes.h>
+#include <netinet/in.h>
+#include <stdbool.h>
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/ioctl.h>
-#include <sys/wait.h>
-#include <termios.h>
-#include <unistd.h>
+#include <time.h>
 
-struct foo {
-    char *name;
-    void (*print) (struct foo *, char *);
-};
+int sum (int *a, int n);
 
-typedef struct foo FOO;
-
-void
-print (FOO *f, char *prefix)
-{
-    printf ("%s: %s\n", prefix, f->name);
-}
+int array[2] = { 0x11, 0x22 };
 
 int
-main (void)
+main ()
 {
-    FOO f = { .name = "lee", .print = print };
-    f.print (&f, "hello");
-    exit (0);
+    int val = sum (array, 2);
+    printf ("val=%d\n", val);
+    return val;
 }

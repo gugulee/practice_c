@@ -2,7 +2,7 @@
 
 /* size of control buffer to send/recv one file descriptor */
 #define CONTROLLEN CMSG_LEN (sizeof (int))
-static struct cmsghdr *cmptr = NULL; /* malloc’ed first time */
+static struct cmsghdr *cmptr = NULL; /* malloc'ed first time */
 
 #define QLEN 10
 #define STALE 30
@@ -221,7 +221,7 @@ serv_listen (const char *name)
         rval = -3;
         goto errout;
     }
-    if (listen (fd, QLEN) < 0) { /* tell kernel we’re a server */
+    if (listen (fd, QLEN) < 0) { /* tell kernel we're a server */
         rval = -4;
         goto errout;
     }
@@ -250,7 +250,7 @@ serv_accept (int listenfd, uid_t *uidptr)
         free (name);
         return (-2); /* often errno=EINTR, if signal caught */
     }
-    /* obtain the client’s uid from its calling address */
+    /* obtain the client's uid from its calling address */
     len -= offsetof (struct sockaddr_un, sun_path); /* len of pathname */
     memcpy (name, un.sun_path, len);
     name[len] = 0; /* null terminate */
@@ -277,7 +277,7 @@ serv_accept (int listenfd, uid_t *uidptr)
     }
     if (uidptr != NULL)
         *uidptr = statbuf.st_uid; /* return uid of caller */
-    unlink (name);                /* we’re done with pathname now */
+    unlink (name);                /* we're done with pathname now */
     free (name);
     return (clifd);
 errout:
@@ -316,7 +316,7 @@ cli_conn (const char *name)
         do_unlink = 1;
         goto errout;
     }
-    /* fill socket address structure with server’s address */
+    /* fill socket address structure with server's address */
     memset (&sun, 0, sizeof (sun));
     sun.sun_family = AF_UNIX;
     strcpy (sun.sun_path, name);
@@ -351,33 +351,33 @@ daemonize (const char *cmd)
      * Get maximum number of file descriptors.
      */
     if (getrlimit (RLIMIT_NOFILE, &rl) < 0)
-        err_quit ("%s: can’t get file limit", cmd);
+        err_quit ("%s: can't get file limit", cmd);
     /*
      * Become a session leader to lose controlling TTY.
      */
     if ((pid = fork ()) < 0)
-        err_quit ("%s: can’t fork", cmd);
+        err_quit ("%s: can't fork", cmd);
     else if (pid != 0) /* parent */
         exit (0);
     setsid ();
     /*
-     * Ensure future opens won’t allocate controlling TTYs.
+     * Ensure future opens won't allocate controlling TTYs.
      */
     sa.sa_handler = SIG_IGN;
     sigemptyset (&sa.sa_mask);
     sa.sa_flags = 0;
     if (sigaction (SIGHUP, &sa, NULL) < 0)
-        err_quit ("%s: can’t ignore SIGHUP", cmd);
+        err_quit ("%s: can't ignore SIGHUP", cmd);
     if ((pid = fork ()) < 0)
-        err_quit ("%s: can’t fork", cmd);
+        err_quit ("%s: can't fork", cmd);
     else if (pid != 0) /* parent */
         exit (0);
     /*
      * Change the current working directory to the root so
-     * we won’t prevent file systems from being unmounted.
+     * we won't prevent file systems from being unmounted.
      */
     if (chdir ("/") < 0)
-        err_quit ("%s: can’t change directory to /", cmd);
+        err_quit ("%s: can't change directory to /", cmd);
     /*
      * Close all open file descriptors.
      */
@@ -428,7 +428,7 @@ tty_raw (int fd) /* put terminal into a raw mode */
     buf.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
     /*
      * No SIGINT on BREAK, CR-to-NL off, input parity
-     * check off, don’t strip 8th bit on input, output
+     * check off, don't strip 8th bit on input, output
      * flow control off.
      */
     buf.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
@@ -479,7 +479,7 @@ tty_raw (int fd) /* put terminal into a raw mode */
 }
 
 int
-tty_reset (int fd) /* restore terminal’s mode */
+tty_reset (int fd) /* restore terminal's mode */
 {
     if (ttystate == RESET)
         return (0);
